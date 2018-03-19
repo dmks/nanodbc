@@ -8,10 +8,11 @@
 #include <algorithm>
 #include <cassert>
 #include <fstream>
+#include <initializer_list>
 #include <iomanip>
 #include <iostream>
-#include <sstream>
 #include <locale>
+#include <sstream>
 
 #if defined(_MSC_VER) && _MSC_VER <= 1800
 // These versions of Visual C++ do not yet support noexcept or override.
@@ -37,9 +38,9 @@
 #endif
 #include <windows.h>
 #endif
+#include <locale>
 #include <sql.h>
 #include <sqlext.h>
-#include <locale>
 
 namespace nanodbc
 {
@@ -120,10 +121,7 @@ inline nanodbc::string convert(std::string const& in)
 
 struct Config
 {
-    nanodbc::string get_connection_string() const
-    {
-        return convert(connection_string_);
-    }
+    nanodbc::string get_connection_string() const { return convert(connection_string_); }
 
     std::string connection_string_;
     std::string data_path_;
@@ -131,7 +129,45 @@ struct Config
     bool show_help_{false};
 };
 
-}} // namespace nanodbc::test
+// Custom matcher for Catch to use with REQUIRE_THAT(a, IsAnyOf({a, b, c}));
+class IntAnyOf : public Catch::MatcherBase<int>
+{
+    std::vector<int> m_values;
+
+public:
+    IntAnyOf(std::initializer_list<int> v)
+        : m_values(v)
+    {
+    }
+
+    // Performs the test for this matcher
+    virtual bool match(int const& i) const override
+    {
+        return std::any_of(m_values.begin(), m_values.end(), [&i](int v) { return v == i; });
+    }
+
+    // Produces a string describing what this matcher does. It should
+    // include any provided data (the begin/ end in this case) and
+    // be written as if it were stating a fact (in the output it will be
+    // preceded by the value under test).
+    virtual std::string describe() const
+    {
+        std::ostringstream ss;
+        ss << "is not member of values [";
+        for (auto& v : m_values)
+            ss << v << ',';
+        ss << ']';
+        return ss.str();
+    }
+};
+
+// The builder function
+inline IntAnyOf IsAnyOf(std::initializer_list<int> v)
+{
+    return IntAnyOf(std::move(v));
+}
+}
+} // namespace nanodbc::test
 
 extern nanodbc::test::Config cfg;
 
@@ -358,7 +394,8 @@ struct base_test_fixture
         infile.open(filename);
         std::string buffer;
         infile >> buffer;
-        if (buffer.empty()) return {};
+        if (buffer.empty())
+            return {};
 
         auto beg = buffer.begin();
         while (*beg == ' ' || *beg == '\0')
@@ -381,7 +418,6 @@ struct base_test_fixture
 #undef NANODBC_SEP
     }
 
-
     nanodbc::string get_env(char const* var) const
     {
         char* env_value = nullptr;
@@ -401,7 +437,7 @@ struct base_test_fixture
         value = env_value;
 #endif
 #ifdef NANODBC_ENABLE_UNICODE
-		return nanodbc::test::convert(value);
+        return nanodbc::test::convert(value);
 #else
         return value;
 #endif

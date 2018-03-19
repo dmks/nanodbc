@@ -1,3 +1,5 @@
+# nanodbc
+
 ![nanodbc-banner][nanodbc-banner]
 
 A small C++ wrapper for the native C ODBC API. Please see the [online documentation][nanodbc] for
@@ -11,15 +13,15 @@ user information, example usage, propaganda, and detailed source level documenta
 
 ## Build Status
 
-| Branch |  Linux/OSX | Windows | Coverity |
-|:--- |:--- |:--- |:--- |
-| `master`  | [![master][travis-badge-master]][travis] | [![master][appveyor-badge]][appveyor] | [![coverity_scan][coverity-badge]][coverity] |
-| `latest` | [![latest][travis-badge-latest]][travis] | &nbsp; | &nbsp; |
-| `release` | [![release][travis-badge-release]][travis] | &nbsp; | &nbsp; |
+| Branch |  Linux/OSX | Windows | Coverage | Coverity | Documentation |
+|:--- |:--- |:--- |:--- |:---|:---|
+| `master`  | [![master][travis-badge-master]][travis] | [![master][appveyor-badge]][appveyor] | [![codecov](https://codecov.io/gh/nanodbc/nanodbc/branch/master/graph/badge.svg)](https://codecov.io/gh/nanodbc/nanodbc) | [![coverity_scan][coverity-badge]][coverity] | [![CircleCI](https://circleci.com/gh/nanodbc/nanodbc/tree/master.svg?style=svg)](https://circleci.com/gh/nanodbc/nanodbc/tree/master) |
+| `latest` | [![latest][travis-badge-latest]][travis] | &nbsp; | &nbsp; | &nbsp; | &nbsp; |
+| `release` | [![release][travis-badge-release]][travis] | &nbsp; | &nbsp; | &nbsp; | &nbsp; |
 
-> **Note:** The Coverity status uses the [coverity_scan][nanodbc-coverity] branch. When `master`
-            has had a significant amount of work pushed to it, merge those changes into
-            `coverity_scan` as well to keep the status up to date.
+> **Note:** The Coverity status uses the [coverity_scan][nanodbc-coverity] branch.
+> When `master` has had a significant amount of work pushed to it,
+> merge those changes into `coverity_scan` as well to keep the status up to date.
 
 ## Philosophy
 
@@ -56,7 +58,7 @@ existing ODBC API calls.
 | `v2.x.x`  | Targets C++14+. All future development will build upon this version. |
 | `v1.x.x`  | Supports C++03 and optionally C++11. *There is no longer any support for this version.* |
 
-# Building
+## Building
 
 nanodbc is intentionally small enough that you can drag and drop the header and implementation
 files into your project and run with it. For those that want it, I have also provided
@@ -76,7 +78,7 @@ Homebrew as `sqliteobdc`! The tests expect to find a data source named `sqlite` 
 `SQLite3 ODBC Driver` on Windows systems. For example, your `odbcinst.ini` file on OS X must have a
 section like the following.
 
-```
+```ini
 [sqlite]
 Description             = SQLite3 ODBC Driver
 Setup                   = /usr/lib/libsqlite3odbc-0.93.dylib
@@ -84,7 +86,7 @@ Driver                  = /usr/lib/libsqlite3odbc-0.93.dylib
 Threading               = 2
 ```
 
-## Example Build Process
+### Example Build Process
 
 It's most convenient to create a build directory for an out of source build, but this isn't
 required. After you've used cmake to generate your Makefiles, `make nanodbc` will build your shared
@@ -92,7 +94,7 @@ object. `make check` will build and run the tests. You can also install nanodbc 
 using `make install`.
 
 If the tests fail, please don't hesitate to [**report it**][nanodbc-new-issue] by creating an issue
-with your detailed test log (prepend your `make` command with `env CTEST_OUTPUT_ON_FAILURE=1 ` to
+with your detailed test log (prepend your `make` command with `env CTEST_OUTPUT_ON_FAILURE=1` to
 enable verbose output please).
 
 ```shell
@@ -109,7 +111,7 @@ make examples # builds all the example programs
 make install # installs nanodbc.h and shared library
 ```
 
-## Build Options
+### Build Options
 
 The following build options are available via [CMake command-line option][cmake-docs] `-D`. If you
 are not using CMake to build nanodbc, you will need to set the corresponding `-D` compile define
@@ -133,7 +135,7 @@ If you need to use the `NANODBC_ENABLE_BOOST=ON` option, you will have to config
 | `NANODBC_ENABLE_WORKAROUND_NODATA` | `OFF` or `ON`        | Enable `SQL_NO_DATA` workaround to issue [#43](https://github.com/nanodbc/nanodbc/issues/43). |
 | `NANODBC_ODBC_VERSION`             | `SQL_OV_ODBC3[...]`  | Forces ODBC version to use. Default is `SQL_OV_ODBC3_80` if available, otherwise `SQL_OV_ODBC3`. |
 
-## Note About iODBC
+### Note About iODBC
 
 Under Windows `sizeof(wchar_t) == sizeof(SQLWCHAR) == 2`, yet on Unix systems
 `sizeof(wchar_t) == 4`. On unixODBC, `sizeof(SQLWCHAR) == 2` while on iODBC,
@@ -148,9 +150,9 @@ _disabling_ unicode mode to avoid `wchar_t` issues.
 
 ---
 
-# Contributing
+## Contributing
 
-## Code Style
+### Code Style
 
 [`clang-format`][clang-format] handles all C++ code formatting for nanodbc. This utility is
 [brew-installable][brew] on OS X (`brew install clang-format`) and is available on all major
@@ -159,12 +161,12 @@ platforms. See our `.clang-format` configuration file for details on the style. 
 single file use the following.
 
 ```shell
-$ clang-format -i /path/to/file
+clang-format -i /path/to/file
 ```
 
 **Please auto-format all code submitted in Pull Requests.**
 
-## Source Level Documentation
+### Source Level Documentation
 
 Source level documentation provided via [GitHub's gh-pages][gh-pages] is available at
 [nanodbc.io][nanodbc]. To re-build and update it, preform the following steps from the
@@ -180,7 +182,7 @@ root directory of the repository:
 Building documentation and gh-pages requires the use of [Doxygen][doxygen] and
 [jekyll][jekyll]. See the [`Makefile` on the `gh-pages` branch][nanodbc-makefile] for more details.
 
-## Quick Setup for Testing or Development Environments
+### Quick Setup for Testing or Development Environments
 
 To get up and running with nanodbc as fast as possible consider using the provided
 [Dockerfile](Dockerfile) and [docker-compose.yml](docker-compose.yml) or [Vagrantfile](Vagrantfile).
@@ -188,15 +190,15 @@ To get up and running with nanodbc as fast as possible consider using the provid
 For example, to spin up a [docker][docker] container suitable for testing and development of nanodbc:
 
 ```shell
-$ cd /path/to/nanodbc
-$ docker build -t nanodbc .
+cd /path/to/nanodbc
+docker build -t nanodbc .
 
 # Use container local nanodbc repository
-$ docker run -it nanodbc /bin/bash
+docker run -it nanodbc /bin/bash
 root@hash:/# mkdir -p /opt/nanodbc/build && cd /opt/nanodbc-host/build
 
 # Alternatively, bind host repository as container volume
-$ docker run -v "$(pwd)":"/opt/$(basename $(pwd))-host" -it nanodbc /bin/bash
+docker run -v "$(pwd)":"/opt/$(basename $(pwd))-host" -it nanodbc /bin/bash
 root@hash:/# mkdir -p /opt/nanodbc-host/build && cd /opt/nanodbc-host/build
 
 root@hash:/opt/nanodbc-host/build# cmake ..
@@ -206,25 +208,25 @@ root@hash:/opt/nanodbc-host/build# make nanodbc
 Or, spin up the complete multi-container environment with database services:
 
 ```shell
-$ cd /path/to/nanodbc
-$ docker-compose build
-$ docker-compose up -d
-$ docker exec -it nanodbc /bin/bash
+cd /path/to/nanodbc
+docker-compose build
+docker-compose up -d
+docker exec -it nanodbc /bin/bash
 ```
 
 Or, to build and ssh into a [vagrant][vagrant] VM (using VirtualBox for example) use:
 
 ```shell
-$ cd /path/to/nanodbc
-$ vagrant up
-$ vagrant ssh
+cd /path/to/nanodbc
+vagrant up
+vagrant ssh
 vagrant@vagrant-ubuntu-precise-64:~$ git clone https://github.com/nanodbc/nanodbc.git
 vagrant@vagrant-ubuntu-precise-64:~$ mkdir -p nanodbc/build && cd nanodbc/build
 vagrant@vagrant-ubuntu-precise-64:~$ CXX=g++-5 cmake ..
 vagrant@vagrant-ubuntu-precise-64:~$ make nanodbc
 ```
 
-## Tests
+### Tests
 
 One of important objectives is to maintain nanodbc covered with tests. New contributions
 submitted via Pull Requests must include corresponding tests. This is important to ensure
@@ -258,9 +260,9 @@ bumps the major, minor, or patch version, then updates the repository's `VERSION
 would run `./utility/publish.sh minor`.
 
 > **Important:** Always update [`CHANGELOG.md`](CHANGELOG.md) with information about new changes,
-                 bug fixes, and features when making a new release. Use the `./utility/changes.sh`
-                 script to aid in your composition of this document. The publish script itself will
-                 attempt to verify that the changelog file has been properly updated.
+> bug fixes, and features when making a new release.
+> Use the `./utility/changes.sh` script to aid in your composition of this document.
+> The publish script itself will attempt to verify that the changelog file has been properly updated.
 
 To do this manually instead, use the following steps &mdash; for example a minor update from
 `2.9.x` to `2.10.0`:
