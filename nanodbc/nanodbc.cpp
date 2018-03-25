@@ -2924,14 +2924,15 @@ inline void result::result_impl::get_ref_impl(short column, T& result) const
                     buffer,          // TargetValuePtr
                     buffer_size,     // BufferLength
                     &ValueLenOrInd); // StrLen_or_IndPtr
-                if (ValueLenOrInd > 0)
-                    out.append(
-                        buffer,
-                        std::min<std::size_t>(
-                            ValueLenOrInd,
-                            col.ctype_ == SQL_C_BINARY ? buffer_size : buffer_size - 1));
+                if (ValueLenOrInd == SQL_NO_TOTAL || ValueLenOrInd > 0)
+                  out.append(
+                      buffer,
+                      ValueLenOrInd == SQL_NO_TOTAL ?
+                        (col.ctype_ == SQL_C_BINARY ? buffer_size : buffer_size - 1) :
+                        ValueLenOrInd
+                  );
                 else if (ValueLenOrInd == SQL_NULL_DATA)
-                    col.cbdata_[static_cast<size_t>(rowset_position_)] = (SQLINTEGER)SQL_NULL_DATA;
+                  col.cbdata_[static_cast<size_t>(rowset_position_)] = (SQLINTEGER)SQL_NULL_DATA;
                 // Sequence of successful calls is:
                 // SQL_NO_DATA or SQL_SUCCESS_WITH_INFO followed by SQL_SUCCESS.
             } while (rc == SQL_SUCCESS_WITH_INFO);
